@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'dart:developer'; // Import for logging
 
 import '../services/api_service.dart';
 import '../theme/colors.dart';
+import '../services/token_service.dart';
 
-class PostCard extends StatelessWidget {
+class UserPostCard extends StatelessWidget {
   final String username;
   final String message;
   final String date;
   final String avatarUrl;
 
-  const PostCard({
+  const UserPostCard({
     super.key,
     required this.username,
     required this.message,
@@ -19,9 +21,8 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final AppColors colors = AppColors();
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Container(
@@ -53,7 +54,7 @@ class PostCard extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: colors.textColor,
+                          color: colors.textColor, // Use textColor from AppColors
                         ),
                       ),
                       // Date
@@ -61,7 +62,7 @@ class PostCard extends StatelessWidget {
                         date,
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade800,
+                          color: colors.textColor, // Adjust opacity of textColor
                         ),
                       ),
                     ],
@@ -72,7 +73,7 @@ class PostCard extends StatelessWidget {
                     message,
                     style: TextStyle(
                       fontSize: 14,
-                      color: colors.textColor,
+                      color: colors.textColor, // Use textColor from AppColors
                     ),
                   ),
                 ],
@@ -85,21 +86,30 @@ class PostCard extends StatelessWidget {
   }
 }
 
-class PostList extends StatelessWidget {
-  const PostList({super.key});
+class UserPostList extends StatelessWidget {
+  const UserPostList({super.key});
 
-  Future<List<Map<String, dynamic>>> _fetchPosts() async {
+  Future<List<Map<String, dynamic>>> _fetchUserPosts() async {
     try {
-      return await ApiService.fetchPosts();
+      final token = await TokenService.getToken();
+      if (token == null) {
+        log('Token is null. User might not be logged in.');
+        throw Exception('Error fetching user posts: No token found. Please log in.');
+      }
+      log('Token retrieved: $token');
+      final posts = await ApiService.fetchUserPosts(token);
+      log('Posts retrieved: $posts');
+      return posts;
     } catch (e) {
-      throw Exception('Error fetching posts: $e');
+      log('Error in _fetchUserPosts: $e');
+      throw Exception('Error fetching user posts: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _fetchPosts(),
+      future: _fetchUserPosts(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -114,11 +124,11 @@ class PostList extends StatelessWidget {
           itemCount: posts.length,
           itemBuilder: (context, index) {
             final post = posts[index];
-            return PostCard(
+            return UserPostCard(
               username: post['username'] ?? 'Unknown',
               message: post['body'] ?? '',
               date: _formatTimeAgo(post['createdAt'] ?? ''),
-              avatarUrl: 'https://via.placeholder.com/48',
+              avatarUrl: post['picture'] ?? 'https://via.placeholder.com/48',
             );
           },
         );
@@ -139,4 +149,3 @@ String _formatTimeAgo(String dateTime) {
     return "${duration.inDays}j";
   }
 }
-

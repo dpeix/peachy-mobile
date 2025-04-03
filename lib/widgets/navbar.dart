@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../pages/home_page.dart';
 import '../pages/login_page.dart';
+import '../pages/profile_page.dart';
 import '../theme/colors.dart';
 
 class NavBar extends StatelessWidget {
@@ -30,7 +31,10 @@ class NavBar extends StatelessWidget {
               );
               break;
             case 1:
-              // Removed navigation to ProfilePage
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const UserProfilePage()),
+              );
               break;
             case 2:
               Navigator.pushReplacement(
