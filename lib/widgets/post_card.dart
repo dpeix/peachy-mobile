@@ -90,7 +90,9 @@ class PostList extends StatelessWidget {
 
   Future<List<Map<String, dynamic>>> _fetchPosts() async {
     try {
-      return await ApiService.fetchPosts();
+      final posts = await ApiService.fetchPosts();
+      posts.sort((a, b) => DateTime.parse(b['createdAt']).compareTo(DateTime.parse(a['createdAt'])));
+      return posts;
     } catch (e) {
       throw Exception('Error fetching posts: $e');
     }

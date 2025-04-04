@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../pages/home_page.dart';
-import '../pages/login_page.dart';
 import '../pages/profile_page.dart';
 import '../theme/colors.dart';
 
@@ -36,12 +35,6 @@ class NavBar extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const UserProfilePage()),
               );
               break;
-            case 2:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-              );
-              break;
           }
         },
         backgroundColor: colors.cardColor,
@@ -51,10 +44,6 @@ class NavBar extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),

@@ -4,6 +4,7 @@ import '../services/token_service.dart';
 import '../services/api_service.dart';
 import '../widgets/user_post_card.dart';
 import '../theme/colors.dart';
+import '../widgets/navbar.dart';
 
 class UserProfilePage extends StatefulWidget {
   const UserProfilePage({super.key});
@@ -132,6 +133,12 @@ class _UserProfilePageState extends State<UserProfilePage> {
             ), // Placeholder pour le reste du contenu
           ),
         ],
+      ),
+      bottomNavigationBar: NavBar(
+        currentIndex: 1, // Index correspondant à la page de profil
+        onTap: (index) {
+          // Logique de navigation si nécessaire
+        },
       ),
     );
   }

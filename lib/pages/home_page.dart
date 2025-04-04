@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/create_post.dart';
 import '../widgets/post_card.dart';
 import '../theme/colors.dart';
 import '../widgets/navbar.dart';
@@ -20,6 +21,19 @@ class HomePage extends StatelessWidget {
           // Navigation logic is already handled in NavBar
         },
       ), // Corrected to use Navbar widget
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: colors.buttonColor, // Use buttonColor from AppColors
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const CreatePost(); // Open the CreatePost dialog directly
+            },
+          );
+        },
+        child: const Icon(Icons.add, color: Colors.white), // Ensure icon color is white
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

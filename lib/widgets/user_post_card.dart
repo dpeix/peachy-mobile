@@ -98,6 +98,7 @@ class UserPostList extends StatelessWidget {
       }
       log('Token retrieved: $token');
       final posts = await ApiService.fetchUserPosts(token);
+      posts.sort((a, b) => DateTime.parse(b['createdAt']).compareTo(DateTime.parse(a['createdAt'])));
       log('Posts retrieved: $posts');
       return posts;
     } catch (e) {
