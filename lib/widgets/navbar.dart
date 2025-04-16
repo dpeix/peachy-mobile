@@ -35,6 +35,12 @@ class NavBar extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const UserProfilePage()),
               );
               break;
+            case 2:
+              Navigator.pushReplacementNamed(
+                context,
+                '/conversations',
+              );
+              break;
           }
         },
         backgroundColor: colors.cardColor,
@@ -48,6 +54,10 @@ class NavBar extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
+          ),
+          BottomNavigationBarItem( // Nouvel élément ajouté
+            icon: Icon(Icons.chat),
+            label: 'Conversations',
           ),
         ],
       ),
