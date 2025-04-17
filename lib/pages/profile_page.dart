@@ -77,14 +77,11 @@ class _UserProfilePageState extends State<UserProfilePage> {
                         backgroundImage: NetworkImage(
                           user['picture']?.isNotEmpty == true
                               ? user['picture']
-                              : 'assets/images/default_avatar.png',
+                              : 'lib/assets/icon/pp.png',
                         ),
                         onBackgroundImageError: (_, __) {
                           log('Erreur lors du chargement de l\'image utilisateur.');
-                        },
-                        child: user['picture'] == null
-                            ? const Icon(Icons.person, size: 50)
-                            : null, // Icône si aucune image
+                        }, // Icône si aucune image
                       ),
                       const SizedBox(height: 16),
                       // Nom d'utilisateur

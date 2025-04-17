@@ -8,4 +8,5 @@ class AppColors {
   final Color buttonColor = const Color(0xFF024048);
   final Color textColor = Colors.black;
   final Color textColorWhite = Colors.white;
+  final Color refreshIndicatorColor = const Color(0xFF024048); // New color for refresh indicator
 }

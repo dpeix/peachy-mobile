@@ -15,6 +15,7 @@ class HomePage extends StatelessWidget {
       backgroundColor: colors.backgroundColor,
       //appBar: AppBar(title: const Text('Home')),
       body: RefreshIndicator(
+        color: colors.refreshIndicatorColor, // Set refresh indicator color
         onRefresh: () async {
           // Trigger a refresh in the PostList widget
           // This will be handled by the PostList's state

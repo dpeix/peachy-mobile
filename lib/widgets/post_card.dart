@@ -142,7 +142,7 @@ class _PostListState extends State<PostList> {
                 username: post['username'] ?? 'Unknown',
                 message: post['body'] ?? '',
                 date: _formatTimeAgo(post['createdAt'] ?? ''),
-                avatarUrl: 'https://via.placeholder.com/48',
+                avatarUrl: 'lib/assets/icon/pp.png', // Replace with actual avatar URL if available
               );
             },
           );

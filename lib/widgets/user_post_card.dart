@@ -129,7 +129,7 @@ class UserPostList extends StatelessWidget {
               username: post['username'] ?? 'Unknown',
               message: post['body'] ?? '',
               date: _formatTimeAgo(post['createdAt'] ?? ''),
-              avatarUrl: post['picture'] ?? 'https://via.placeholder.com/48',
+              avatarUrl: post['picture'] ?? 'lib/assets/icon/pp.png',
             );
           },
         );
