@@ -7,4 +7,5 @@ class AppColors {
   final Color textFieldColor = Color(0xFFFFF5F3);
   final Color buttonColor = const Color(0xFF024048);
   final Color textColor = Colors.black;
+  final Color textColorWhite = Colors.white;
 }

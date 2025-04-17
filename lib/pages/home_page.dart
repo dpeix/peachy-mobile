@@ -14,7 +14,13 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: colors.backgroundColor,
       //appBar: AppBar(title: const Text('Home')),
-      body: const PostList(), // Replace token display with PostList
+      body: RefreshIndicator(
+        onRefresh: () async {
+          // Trigger a refresh in the PostList widget
+          // This will be handled by the PostList's state
+        },
+        child: const PostList(),
+      ),
       bottomNavigationBar: NavBar(
         currentIndex: 0, // Set the index for the Profile tab
         onTap: (index) {

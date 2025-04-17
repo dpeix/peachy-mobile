@@ -119,22 +119,14 @@ class _MessagePageState extends State<MessagePage> {
                               message['author'] ?? 'Unknown Author',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                color: _colors.textColor,
+                                color: isCurrentUser ? _colors.textColorWhite : _colors.textColor, // White for current user
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               message['body'] ?? 'No content',
                               style: TextStyle(
-                                color: _colors.textColor,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              message['date_post'] ?? 'Unknown Date',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: _colors.textColor.withOpacity(0.7),
+                                color: isCurrentUser ? _colors.textColorWhite : _colors.textColor, // White for current user
                               ),
                             ),
                           ],
@@ -165,16 +157,12 @@ class _MessagePageState extends State<MessagePage> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _colors.buttonColor, // Button color
+                IconButton(
+                  icon: Icon(
+                    Icons.send,
+                    color: _colors.buttonColor, // Icon color
                   ),
                   onPressed: _isSending ? null : _sendMessage,
-                  child: _isSending
-                      ? const CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                        )
-                      : const Text('Send'),
                 ),
               ],
             ),

@@ -19,9 +19,8 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final AppColors colors = AppColors();
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Container(
@@ -85,8 +84,22 @@ class PostCard extends StatelessWidget {
   }
 }
 
-class PostList extends StatelessWidget {
+class PostList extends StatefulWidget {
   const PostList({super.key});
+
+  @override
+  State<PostList> createState() => _PostListState();
+}
+
+class _PostListState extends State<PostList> {
+  final GlobalKey<RefreshIndicatorState> _refreshKey = GlobalKey<RefreshIndicatorState>();
+  late Future<List<Map<String, dynamic>>> _postsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _postsFuture = _fetchPosts();
+  }
 
   Future<List<Map<String, dynamic>>> _fetchPosts() async {
     try {
@@ -98,33 +111,43 @@ class PostList extends StatelessWidget {
     }
   }
 
+  Future<void> _refreshPosts() async {
+    setState(() {
+      _postsFuture = _fetchPosts();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _fetchPosts(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No posts available.'));
-        }
+    return RefreshIndicator(
+      key: _refreshKey,
+      onRefresh: _refreshPosts,
+      child: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _postsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No posts available.'));
+          }
 
-        final posts = snapshot.data!;
-        return ListView.builder(
-          itemCount: posts.length,
-          itemBuilder: (context, index) {
-            final post = posts[index];
-            return PostCard(
-              username: post['username'] ?? 'Unknown',
-              message: post['body'] ?? '',
-              date: _formatTimeAgo(post['createdAt'] ?? ''),
-              avatarUrl: 'https://via.placeholder.com/48',
-            );
-          },
-        );
-      },
+          final posts = snapshot.data!;
+          return ListView.builder(
+            itemCount: posts.length,
+            itemBuilder: (context, index) {
+              final post = posts[index];
+              return PostCard(
+                username: post['username'] ?? 'Unknown',
+                message: post['body'] ?? '',
+                date: _formatTimeAgo(post['createdAt'] ?? ''),
+                avatarUrl: 'https://via.placeholder.com/48',
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }
