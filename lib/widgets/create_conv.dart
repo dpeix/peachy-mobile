@@ -32,11 +32,11 @@ class _CreateConvWidgetState extends State<CreateConvWidget> {
       debugPrint('Selected user IDs: $_selectedUserIds'); // Log selected user IDs
       final List<String> userIris = _selectedUserIds.map((id) => '/api/users/$id').toList();
       debugPrint('Generated user IRIs: $userIris'); // Log generated IRIs
-      await ApiService.createConversation(_selectedUserIds.toList());
+      final String newConvId = await ApiService.createConversation(_selectedUserIds.toList());
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Conversation created successfully!')),
       );
-      Navigator.pop(context); // Close the widget after success
+      Navigator.pop(context, newConvId); // Return the new conversation ID to the previous page
     } catch (e) {
       debugPrint('Error creating conversation: $e'); // Log the error
       ScaffoldMessenger.of(context).showSnackBar(
@@ -101,10 +101,13 @@ class _CreateConvWidgetState extends State<CreateConvWidget> {
                 padding: const EdgeInsets.all(16.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _colors.buttonColor,
+                  backgroundColor: _colors.buttonColor,
                   ),
                   onPressed: _createConversation,
-                  child: const Text('Create Conversation'),
+                  child: Text(
+                  'Create Conversation',
+                  style: TextStyle(color: _colors.textColorWhite),
+                  ),
                 ),
               ),
             ],

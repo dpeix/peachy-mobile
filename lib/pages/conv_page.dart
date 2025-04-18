@@ -106,13 +106,18 @@ class _ConvPageState extends State<ConvPage> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: _colors.buttonColor, // Use buttonColor for the FAB
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final newConvId = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const CreateConvWidget()),
           );
+          if (newConvId != null) {
+            setState(() {
+              _conversations = ApiService.fetchConversations(); // Refresh the conversations list
+            });
+          }
         },
-        child: const Icon(Icons.add), // Add icon for creating a new conversation
+        child: const Icon(Icons.add, color: Colors.white), // Add icon for creating a new conversation
       ),
       bottomNavigationBar: NavBar(
         currentIndex: 2, // Set the current index to highlight the Conversations tab

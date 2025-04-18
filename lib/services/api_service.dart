@@ -326,7 +326,7 @@ class ApiService {
     }
   }
 
-  static Future<void> createConversation(List<String> userIds) async {
+  static Future<String> createConversation(List<String> userIds) async {
     try {
       final token = await TokenService.getToken();
       if (token == null) {
@@ -352,7 +352,10 @@ class ApiService {
       log('Response status: ${response.statusCode}'); // Log the response status
       log('Response body: ${response.body}'); // Log the response body
 
-      if (response.statusCode != 201) {
+      if (response.statusCode == 201) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        return data['id'].toString(); // Return the ID of the created conversation
+      } else {
         throw Exception('Failed to create conversation: ${response.statusCode} - ${response.body}');
       }
     } catch (e) {
