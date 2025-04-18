@@ -3,6 +3,7 @@ import '../services/api_service.dart';
 import 'message_page.dart';
 import '../widgets/navbar.dart'; // Import the NavBar widget
 import '../theme/colors.dart'; // Import AppColors
+import '../widgets/create_conv.dart'; // Import CreateConvWidget
 
 class ConvPage extends StatefulWidget {
   const ConvPage({super.key});
@@ -102,6 +103,16 @@ class _ConvPageState extends State<ConvPage> {
             },
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: _colors.buttonColor, // Use buttonColor for the FAB
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CreateConvWidget()),
+          );
+        },
+        child: const Icon(Icons.add), // Add icon for creating a new conversation
       ),
       bottomNavigationBar: NavBar(
         currentIndex: 2, // Set the current index to highlight the Conversations tab

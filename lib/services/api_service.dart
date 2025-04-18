@@ -261,4 +261,150 @@ class ApiService {
       throw Exception('Error sending message: $e');
     }
   }
+
+  static Future<List<Map<String, dynamic>>> fetchAllUsers() async {
+    try {
+      final token = await TokenService.getToken();
+      if (token == null) {
+        throw Exception('No token found. Please log in again.');
+      }
+
+      final response = await http.get(
+        Uri.parse('$_baseUrl/api/users'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        return List<Map<String, dynamic>>.from(data['member']);
+      } else {
+        throw Exception('Failed to fetch users: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching users: $e');
+    }
+  }
+
+  static Future<List<String>> createConvUsers(List<String> userIds) async {
+    try {
+      final token = await TokenService.getToken();
+      if (token == null) {
+        throw Exception('No token found. Please log in again.');
+      }
+
+      final List<String> convUserIris = [];
+      for (final userId in userIds) {
+        final url = '$_baseUrl/api/conv_users';
+        final body = jsonEncode({
+          'users': '/api/users/$userId',
+        });
+        log('Creating ConvUser at $url with body: $body'); // Log the URL and body
+
+        final response = await http.post(
+          Uri.parse(url),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/ld+json',
+          },
+          body: body,
+        );
+
+        log('Response status: ${response.statusCode}'); // Log the response status
+        log('Response body: ${response.body}'); // Log the response body
+
+        if (response.statusCode == 201) {
+          final data = jsonDecode(response.body) as Map<String, dynamic>;
+          convUserIris.add(data['@id'] as String); // Add the IRI of the created ConvUser
+        } else {
+          throw Exception('Failed to create ConvUser: ${response.statusCode} - ${response.body}');
+        }
+      }
+      return convUserIris;
+    } catch (e) {
+      log('Error creating ConvUsers: $e'); // Log the error
+      throw Exception('Error creating ConvUsers: $e');
+    }
+  }
+
+  static Future<void> createConversation(List<String> userIds) async {
+    try {
+      final token = await TokenService.getToken();
+      if (token == null) {
+        throw Exception('No token found. Please log in again.');
+      }
+
+      // Create ConvUsers and get their IRIs
+      final List<String> convUserIris = await createConvUsers(userIds);
+
+      final url = '$_baseUrl/api/convs';
+      final body = jsonEncode({'convUsers': convUserIris});
+      log('Creating conversation at $url with body: $body'); // Log the URL and body
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/ld+json',
+        },
+        body: body,
+      );
+
+      log('Response status: ${response.statusCode}'); // Log the response status
+      log('Response body: ${response.body}'); // Log the response body
+
+      if (response.statusCode != 201) {
+        throw Exception('Failed to create conversation: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      log('Error creating conversation: $e'); // Log the error
+      throw Exception('Error creating conversation: $e');
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchConvUsers(String convId) async {
+    try {
+      final token = await TokenService.getToken();
+      if (token == null) {
+        throw Exception('No token found. Please log in again.');
+      }
+
+      final response = await http.get(
+        Uri.parse('$_baseUrl/api/conv_users?convs=/api/convs/$convId'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        return List<Map<String, dynamic>>.from(data['member']);
+      } else {
+        throw Exception('Failed to fetch conv_users: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Error fetching conv_users: $e');
+    }
+  }
+
+  static Future<void> updateConvUserLastCheck(String convUserId) async {
+    try {
+      final token = await TokenService.getToken();
+      if (token == null) {
+        throw Exception('No token found. Please log in again.');
+      }
+
+      final response = await http.patch(
+        Uri.parse('$_baseUrl/api/conv_users/$convUserId'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'date_last_check': DateTime.now().toIso8601String()}),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update conv_user: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('Error updating conv_user: $e');
+    }
+  }
 }
