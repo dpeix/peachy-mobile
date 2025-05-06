@@ -78,27 +78,41 @@ class _ConvPageState extends State<ConvPage> {
             itemCount: conversations.length,
             itemBuilder: (context, index) {
               final conv = conversations[index];
-              return Card(
-                color: _colors.cardColor, // Use cardColor for conversation cards
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: ListTile(
-                  title: Text(
-                    'Conversation ${conv['id']}',
-                    style: TextStyle(color: _colors.textColor), // Text color
-                  ),
-                  //subtitle: Text(
-                    //'Last message: ${conv['date_last_message'] ?? 'N/A'}',
-                    //style: TextStyle(color: _colors.textColor.withOpacity(0.7)), // Subtitle color
-                  //),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MessagePage(convId: conv['id'].toString()), // Convert ID to String
+              return FutureBuilder<List<String>>(
+                future: ApiService.fetchConvUsernames(conv['id'].toString()), // Fetch usernames for the conversation
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return ListTile(
+                      title: Text(
+                        'Error loading conversation title',
+                        style: TextStyle(color: _colors.textColor),
                       ),
                     );
-                  },
-                ),
+                  } else {
+                    final usernames = snapshot.data ?? [];
+                    final title = usernames.join(', '); // Combine usernames into a single string
+                    return Card(
+                      color: _colors.cardColor,
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: ListTile(
+                        title: Text(
+                          title,
+                          style: TextStyle(color: _colors.textColor),
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MessagePage(convId: conv['id'].toString()),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }
+                },
               );
             },
           );

@@ -410,4 +410,47 @@ class ApiService {
       throw Exception('Error updating conv_user: $e');
     }
   }
+
+  static Future<List<String>> fetchConvUsernames(String convId) async {
+    try {
+      final token = await TokenService.getToken();
+      if (token == null) {
+        throw Exception('No token found. Please log in again.');
+      }
+
+      final convUsersResponse = await http.get(
+        Uri.parse('$_baseUrl/api/conv_users?convs=/api/convs/$convId'),
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      if (convUsersResponse.statusCode != 200) {
+        throw Exception('Failed to fetch conv_users: ${convUsersResponse.statusCode}');
+      }
+
+      final convUsersData = jsonDecode(convUsersResponse.body) as Map<String, dynamic>;
+      final convUsers = List<Map<String, dynamic>>.from(convUsersData['member']);
+
+      final List<String> usernames = [];
+      for (final convUser in convUsers) {
+        final userIri = convUser['users'] as String?;
+        if (userIri != null) {
+          final userId = userIri.split('/').last;
+          final userResponse = await http.get(
+            Uri.parse('$_baseUrl/api/users/$userId'),
+            headers: {'Authorization': 'Bearer $token'},
+          );
+
+          if (userResponse.statusCode == 200) {
+            final userData = jsonDecode(userResponse.body) as Map<String, dynamic>;
+            usernames.add(userData['username'] as String);
+          }
+        }
+      }
+
+      return usernames;
+    } catch (e) {
+      log('Error fetching conversation usernames: $e');
+      throw Exception('Error fetching conversation usernames: $e');
+    }
+  }
 }
