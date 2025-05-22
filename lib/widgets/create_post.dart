@@ -163,33 +163,37 @@ class _CreatePostState extends State<CreatePost> with SingleTickerProviderStateM
             body: Container(
               color: colors.cardColor, // Use cardColor for the form background
               padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _contentController,
-                    decoration: InputDecoration(
-                      labelText: 'Content',
-                      labelStyle: TextStyle(color: colors.textColor), // Use textColor for label
-                      filled: true,
-                      fillColor: colors.backgroundColor, // Use textFieldColor for background
+              child: SingleChildScrollView(
+                reverse: true, // Pour que le scroll aille vers le bas quand le clavier apparaît
+                child: Column(
+                  mainAxisSize: MainAxisSize.min, // Adapter la taille à son contenu
+                  children: [
+                    TextField(
+                      controller: _contentController,
+                      decoration: InputDecoration(
+                        labelText: 'Content',
+                        labelStyle: TextStyle(color: colors.textColor), // Use textColor for label
+                        filled: true,
+                        fillColor: colors.backgroundColor, // Use textFieldColor for background
+                      ),
+                      style: TextStyle(color: colors.textColor), // Use textColor for input text
+                      maxLines: 5,
                     ),
-                    style: TextStyle(color: colors.textColor), // Use textColor for input text
-                    maxLines: 5,
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: colors.buttonColor, // Use buttonColor for the button
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colors.buttonColor, // Use buttonColor for the button
+                      ),
+                      onPressed: _isLoading ? null : _submitPost,
+                      child: _isLoading
+                          ? const CircularProgressIndicator()
+                          : const Text(
+                              'Submit',
+                              style: TextStyle(color: Colors.white), // Ensure text color is white
+                            ),
                     ),
-                    onPressed: _isLoading ? null : _submitPost,
-                    child: _isLoading
-                        ? const CircularProgressIndicator()
-                        : const Text(
-                            'Submit',
-                            style: TextStyle(color: Colors.white), // Ensure text color is white
-                          ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

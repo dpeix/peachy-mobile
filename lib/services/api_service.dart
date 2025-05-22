@@ -28,9 +28,13 @@ class ApiService {
 
   static Future<List<Map<String, dynamic>>> fetchPosts() async {
     try {
+      final token = await TokenService.getToken(); // Retrieve token
       final response = await http.get(
         Uri.parse('$_baseUrl/api/posts'),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
       );
 
       if (response.statusCode == 200) {

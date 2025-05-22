@@ -92,7 +92,8 @@ class _ConvPageState extends State<ConvPage> {
                     );
                   } else {
                     final usernames = snapshot.data ?? [];
-                    final title = usernames.join(', '); // Combine usernames into a single string
+                    final uniqueUsernames = usernames.toSet().toList(); // Supprimer les doublons
+                    final title = uniqueUsernames.join(', '); // Combine usernames into a single string
                     return Card(
                       color: _colors.cardColor,
                       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
